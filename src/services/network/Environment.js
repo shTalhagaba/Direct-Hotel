@@ -1,5 +1,6 @@
-export const BASE_URL = 'https://api.sed-app.com/api/v1/';
+export const BASE_URL = 'http://hotels-api.directksa.com/api/v1/';
 
 export const api = {
-  signup: 'user/signup',
+  mountedData: 'mountedData',
+  autoCompleteSearch: 'autoCompleteSearch'
 };

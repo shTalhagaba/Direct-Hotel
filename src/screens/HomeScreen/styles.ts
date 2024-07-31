@@ -19,10 +19,10 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
-    elevation: 3, // Reset elevation to avoid full shadow on Android
+    elevation: 3,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0', // Optional: bottom border for separation
-    overflow: 'hidden', // Ensure the shadow is contained
+    borderBottomColor: '#E0E0E0',
+    overflow: 'hidden',
   },
   tab: {
     alignItems: 'center',
@@ -58,6 +58,58 @@ const styles = StyleSheet.create({
     height: heightPixel(56),
     borderBottomColor: colors.primary,
     borderBottomWidth: 2,
+  },
+  bottomBlock: {
+    padding: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.03)',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    marginTop: 30,
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    alignItems:'center',
+  },
+  boldText: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    marginBottom: 10,
+    color: colors.black,
+  },
+  cardContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  cardIcon: {
+    width: 24,
+    height: 24,
+    marginRight: 10,
+  },
+  cardText: {
+    fontSize: 16,
+    color: colors.black,
+    marginLeft: 10,
+  },
+  partnershipText: {
+    fontWeight: 'bold',
+    fontSize: 13,
+    marginTop: 30,
+    color: colors.pureBlack,
+  },
+  partnersContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  partnerImage: {
+    width: widthPixel(24),
+    height: heightPixel(18),
+    marginTop: heightPixel(12),
+  },
+  imageContainer: {
+    width: width/4,
+    alignItems:'center',
+    alignContent:'center',
   },
 });
 

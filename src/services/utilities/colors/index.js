@@ -5,7 +5,7 @@ export const colors = {
     primaryWhite: '#FFFFFF',
     primaryBlack: '#000000',
     greyBlack: 'rgba(230, 232, 238, 1)',
-    grey: '#868889',
+    grey: '#B3B3B8',
     lightGrey: '#EFF1F3',
     transparent: 'transparent',
     red: 'red',
