@@ -1,0 +1,22 @@
+export const colors = {
+    primary: '#FC8004',
+    primaryBG: 'rgba(245, 247, 250, 1)',
+    primaryYellow: '#FFC43B',
+    primaryWhite: '#FFFFFF',
+    primaryBlack: '#000000',
+    greyBlack: 'rgba(230, 232, 238, 1)',
+    grey: '#868889',
+    lightGrey: '#EFF1F3',
+    transparent: 'transparent',
+    red: 'red',
+    green: 'green',
+    white: '#ffffff',
+    black50: 'rgba(0, 0, 0, 0.5)',
+    black40: 'rgba(0, 0, 0, 0.4)',
+    black20: 'rgba(0, 0, 0, 0.2)',
+    tabBarInactive: '#737373',
+    black: '#222222',
+    pureBlack: '#000000',
+    textGrey: '#6D6A69',
+
+};
