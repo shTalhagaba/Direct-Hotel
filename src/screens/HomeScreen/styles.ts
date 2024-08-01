@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     width: '100%',
-    alignItems:'center',
+    alignItems: 'center',
   },
   boldText: {
     fontWeight: 'bold',
@@ -80,6 +80,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
+    backgroundColor: colors.primaryWhite
   },
   cardIcon: {
     width: 24,
@@ -107,9 +108,9 @@ const styles = StyleSheet.create({
     marginTop: heightPixel(12),
   },
   imageContainer: {
-    width: width/4,
-    alignItems:'center',
-    alignContent:'center',
+    width: width / 4,
+    alignItems: 'center',
+    alignContent: 'center',
   },
 });
 
