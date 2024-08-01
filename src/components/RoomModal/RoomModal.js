@@ -7,21 +7,54 @@ import {
   Image,
   View,
   TouchableOpacity,
+  FlatList,
 } from 'react-native';
 import { colors, appImages } from '../../services';
 import { useNavigation } from '@react-navigation/native';
 import Button from '../Button/Button';
+import CurrencyModal from '../CurrencyModal/CurrencyModal';
 import { heightPixel, widthPixel } from '../../services/constants/index';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 
-const RequestModal = (props) => {
+const currencies = ['SAR', 'USD', 'AED', 'EUR', 'GBP'];
+
+const RoomModal = (props) => {
   const navigation = useNavigation();
   const [roomValue, setRoomValue] = useState(0);
   const [adultsValue, setAdultsValue] = useState(0);
   const [childrenValue, setChildrenValue] = useState(0);
+  const [childrenAges, setChildrenAges] = useState([]);
+  const [selectedCurrency, setSelectedCurrency] = useState('SAR');
+  const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
+  const [isCurrencyModalVisible, setIsCurrencyModalVisible] = useState(false);
+
+  const addChild = () => {
+    setChildrenAges([...childrenAges, { id: Date.now(), age: null }]);
+  };
+
+  const removeChild = (id) => {
+    setChildrenAges(childrenAges.filter((child) => child.id !== id));
+  };
+
+  const setChildAge = (id, age) => {
+    setChildrenAges(
+      childrenAges.map((child) =>
+        child.id === id ? { ...child, age } : child,
+      ),
+    );
+  };
+
+  const toggleCurrencyDropdown = () => {
+    setShowCurrencyDropdown(!showCurrencyDropdown);
+  };
+
+  const selectCurrency = (currency) => {
+    setSelectedCurrency(currency);
+    setIsCurrencyModalVisible(false);
+  };
 
   return (
     <View style={styles.centeredView}>
@@ -33,134 +66,194 @@ const RequestModal = (props) => {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.heading}>Select Rooms and Guest Count</Text>
-            <View style={[styles.itemContainer, { marginTop: 10 }]}>
-              <View style={{ flexDirection: 'row' }}>
-                <Icon name="bed" size={24} color={colors.black} />
-                <Text style={styles.itemTxt}>Rooms</Text>
-              </View>
-              <View style={styles.quantityContainer}>
-                <TouchableOpacity
-                  disabled={roomValue === 0 ? true : false}
-                  onPress={() => setRoomValue(roomValue - 1)}
-                  style={
-                    roomValue === 0
-                      ? styles.minusContainer
-                      : styles.plusContainer
-                  }
-                >
-                  <Text
-                    key={roomValue}
-                    style={roomValue === 0 ? styles.minusTxt : styles.plusTxt}
+            <View style={styles.modalLine} />
+            <View style={styles.modalView2}>
+              <Text style={styles.heading}>Select Rooms and Guest Count</Text>
+              <View style={[styles.itemContainer, { marginTop: 10 }]}>
+                <View style={{ flexDirection: 'row' }}>
+                  <Icon name="bed" size={24} color={colors.black} />
+                  <Text style={styles.itemTxt}>Rooms</Text>
+                </View>
+                <View style={styles.quantityContainer}>
+                  <TouchableOpacity
+                    disabled={roomValue === 0}
+                    onPress={() => setRoomValue(roomValue - 1)}
+                    style={
+                      roomValue === 0
+                        ? styles.minusContainer
+                        : styles.plusContainer
+                    }
                   >
-                    -
+                    <Text
+                      style={roomValue === 0 ? styles.minusTxt : styles.plusTxt}
+                    >
+                      -
+                    </Text>
+                  </TouchableOpacity>
+                  <Text style={[styles.desTxt, { marginHorizontal: 14 }]}>
+                    {roomValue}
                   </Text>
-                </TouchableOpacity>
-                <Text
-                  style={[
-                    styles.desTxt,
-                    { marginHorizontal: 14, marginTop: 5 },
-                  ]}
-                >
-                  {roomValue}
-                </Text>
-                <TouchableOpacity
-                  onPress={() => setRoomValue(roomValue + 1)}
-                  style={styles.plusContainer}
-                >
-                  <Text style={styles.plusTxt}>+</Text>
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => setRoomValue(roomValue + 1)}
+                    style={styles.plusContainer}
+                  >
+                    <Text style={styles.plusTxt}>+</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-            <View style={styles.itemContainer}>
-              <View style={{ flexDirection: 'row' }}>
-                <Ionicons name="man" size={24} color={colors.black} />
-                <Text style={styles.itemTxt}>Adults</Text>
-              </View>
-              <View style={styles.quantityContainer}>
-                <TouchableOpacity
-                  disabled={adultsValue === 0 ? true : false}
-                  onPress={() => setAdultsValue(adultsValue - 1)}
-                  style={styles.minusContainer}
-                >
-                  <Text style={styles.minusTxt}>-</Text>
-                </TouchableOpacity>
-                <Text
-                  style={[
-                    styles.desTxt,
-                    { marginHorizontal: 14, marginTop: 5 },
-                  ]}
-                >
-                  {adultsValue}
-                </Text>
-                <TouchableOpacity
-                  onPress={() => setAdultsValue(adultsValue + 1)}
-                  style={styles.plusContainer}
-                >
-                  <Text style={styles.plusTxt}>+</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            <View style={styles.itemContainer}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginStart: 5,
-                }}
-              >
-                <FontAwesome6 name="child" size={20} color={colors.black} />
-                <Text style={[styles.itemTxt, { marginLeft: 8 }]}>
-                  Children{' '}
-                  <Text style={{ fontSize: 10, color: colors.grey }}>
-                    17 Years or less
+              <View style={styles.itemContainer}>
+                <View style={{ flexDirection: 'row' }}>
+                  <Ionicons name="man" size={24} color={colors.black} />
+                  <Text style={styles.itemTxt}>Adults</Text>
+                </View>
+                <View style={styles.quantityContainer}>
+                  <TouchableOpacity
+                    disabled={adultsValue === 0}
+                    onPress={() => setAdultsValue(adultsValue - 1)}
+                    style={
+                      adultsValue === 0
+                        ? styles.minusContainer
+                        : styles.plusContainer
+                    }
+                  >
+                    <Text
+                      style={
+                        adultsValue === 0 ? styles.minusTxt : styles.plusTxt
+                      }
+                    >
+                      -
+                    </Text>
+                  </TouchableOpacity>
+                  <Text
+                    style={[
+                      styles.desTxt,
+                      { marginHorizontal: 14, marginTop: 5 },
+                    ]}
+                  >
+                    {adultsValue}
                   </Text>
-                </Text>
+                  <TouchableOpacity
+                    onPress={() => setAdultsValue(adultsValue + 1)}
+                    style={styles.plusContainer}
+                  >
+                    <Text style={styles.plusTxt}>+</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-              <View style={styles.quantityContainer}>
+              <View style={styles.itemContainer}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginStart: 5,
+                  }}
+                >
+                  <FontAwesome6 name="child" size={20} color={colors.black} />
+                  <Text style={[styles.itemTxt, { marginLeft: 14 }]}>
+                    Children{' '}
+                    <Text style={{ fontSize: 10, color: colors.grey }}>
+                      17 Years or less
+                    </Text>
+                  </Text>
+                </View>
+                <View style={styles.quantityContainer}>
+                  <TouchableOpacity
+                    disabled={childrenValue === 0}
+                    onPress={() => {
+                      setChildrenValue(childrenValue - 1);
+                      setChildrenAges(childrenAges.slice(0, -1));
+                    }}
+                    style={
+                      childrenValue === 0
+                        ? styles.minusContainer
+                        : styles.plusContainer
+                    }
+                  >
+                    <Text
+                      style={
+                        childrenValue === 0 ? styles.minusTxt : styles.plusTxt
+                      }
+                    >
+                      -
+                    </Text>
+                  </TouchableOpacity>
+                  <Text
+                    style={[
+                      styles.desTxt,
+                      { marginHorizontal: 14, marginTop: 5 },
+                    ]}
+                  >
+                    {childrenValue}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setChildrenValue(childrenValue + 1);
+                      addChild();
+                    }}
+                    style={styles.plusContainer}
+                  >
+                    <Text style={styles.plusTxt}>+</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              {childrenAges.map((child, index) => (
+                <View key={child.id} style={styles.childContainer}>
+                  <Text style={styles.childText}>Child {index + 1}</Text>
+                  <View style={{ flexDirection: 'row' }}>
+                    <Text style={[styles.childText, { marginRight: 20 }]}>
+                      Age:
+                    </Text>
+                    <TouchableOpacity
+                      style={styles.crossContainer}
+                      onPress={() => removeChild(child.id)}
+                    >
+                      <Icon name="close" size={15} color={colors.primary} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))}
+              <View style={styles.itemContainer}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    marginStart: 5,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Fontisto
+                    name="money-symbol"
+                    size={16}
+                    color={colors.black}
+                  />
+                  <Text style={[styles.itemTxt, { marginLeft: 9 }]}>
+                    Currency
+                  </Text>
+                </View>
                 <TouchableOpacity
-                  disabled={childrenValue === 0 ? true : false}
-                  onPress={() => setChildrenValue(childrenValue - 1)}
-                  style={styles.minusContainer}
+                  style={styles.currencyContainer}
+                  onPress={() => setIsCurrencyModalVisible(true)}
                 >
-                  <Text style={styles.minusTxt}>-</Text>
-                </TouchableOpacity>
-                <Text
-                  style={[
-                    styles.desTxt,
-                    { marginHorizontal: 14, marginTop: 5 },
-                  ]}
-                >
-                  {childrenValue}
-                </Text>
-                <TouchableOpacity
-                  onPress={() => setChildrenValue(childrenValue + 1)}
-                  style={styles.plusContainer}
-                >
-                  <Text style={styles.plusTxt}>+</Text>
+                  <Image source={appImages.hotels} style={styles.icon} />
+
+                  <Text
+                    style={[styles.currencyText, { paddingHorizontal: 10 }]}
+                  >
+                    {selectedCurrency}
+                  </Text>
+                  <Icon
+                    name="arrow-drop-down"
+                    size={24}
+                    color={colors.primaryBlack}
+                  />
                 </TouchableOpacity>
               </View>
+              <Text style={[styles.heading, { paddingVertical: 20 }]}>
+                {roomValue} Rooms - {adultsValue} Adults - {childrenValue}{' '}
+                Children
+              </Text>
             </View>
-            <View style={styles.itemContainer}>
-              <View style={{ flexDirection: 'row' }}>
-                <Fontisto name="money-symbol" size={18} color={colors.black} />
-                <Text style={[styles.itemTxt, { marginLeft: 5 }]}>
-                  Currency
-                </Text>
-              </View>
-              <View style={styles.currencyContainer}>
-                <Image source={appImages.hotels} style={styles.icon} />
-                <Text style={[styles.currencyText, { paddingHorizontal: 10 }]}>
-                  SAR
-                </Text>
-                <Icon name="arrow-drop-down" size={24} color={colors.primaryBlack} />
-              </View>
-            </View>
-            <Text style={[styles.heading, { paddingVertical: 20 }]}>
-              {roomValue} Rooms - {adultsValue} Adults - {childrenValue}{' '}
-              Children{' '}
-            </Text>
             <Button
               btnTitle={'CONTINUE'}
               containerStyle={{ marginBottom: 20, marginTop: 0 }}
@@ -169,6 +262,16 @@ const RequestModal = (props) => {
           </View>
         </View>
       </Modal>
+
+      {/* Currency Modal */}
+      <CurrencyModal
+        toggleCurrencyDropdown={toggleCurrencyDropdown}
+        selectCurrency={selectCurrency}
+        isCurrencyModalVisible={isCurrencyModalVisible}
+        setIsCurrencyModalVisible={setIsCurrencyModalVisible}
+        selectedCurrency={selectedCurrency}
+
+      />
     </View>
   );
 };
@@ -184,9 +287,19 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primaryWhite,
     borderTopEndRadius: 20,
     borderTopStartRadius: 20,
-    height: 'auto',
-    paddingVertical: 40,
-    paddingHorizontal: 20,
+    paddingVertical: 7,
+  },
+  modalView2: {
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+  },
+  modalLine: {
+    width: 40,
+    height: 4,
+    backgroundColor: 'lightgrey',
+    alignSelf: 'center',
+    borderRadius: 10,
+    marginBottom: 10,
   },
   heading: {
     fontSize: 16,
@@ -203,9 +316,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 10,
     borderBlockColor: 'lightgrey',
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.4,
   },
-
   itemTxt: {
     fontSize: 16,
     color: '#1A1A1A',
@@ -214,9 +326,10 @@ const styles = StyleSheet.create({
   },
   quantityContainer: {
     marginStart: 10,
-    alignSelf: 'flex-end',
+    alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   plusContainer: {
     backgroundColor: colors.primary,
@@ -236,6 +349,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  crossContainer: {
+    backgroundColor: colors.primaryWhite,
+    width: widthPixel(27),
+    height: heightPixel(27),
+    borderRadius: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   currencyContainer: {
     backgroundColor: colors.primaryWhite,
     borderWidth: 1,
@@ -247,29 +368,43 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   plusTxt: {
-    fontSize: 16,
+    fontSize: 18,
     color: colors.primaryWhite,
-    fontWeight: '500',
+    fontWeight: '400',
   },
   minusTxt: {
-    fontSize: 16,
-    color: 'lightGrey',
-    fontWeight: '500',
+    fontSize: 18,
+    color: colors.primary,
+    fontWeight: '400',
   },
   desTxt: {
-    fontSize: 16,
-    color: colors.primaryBlack,
+    fontSize: 17,
+    color: colors.grey,
     fontWeight: '500',
+    textAlign: 'center',
   },
-  btnContainer: {
-    marginBottom: 20,
-    marginHorizontal: 20,
+  childContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    borderBlockColor: 'lightgrey',
+    borderBottomWidth: 0.5,
   },
   currencyText: {
     fontSize: 13,
     color: colors.primaryBlack,
     fontWeight: '700',
-  }
+  },
+  btnContainer: {
+    marginBottom: 20,
+    marginHorizontal: 20,
+  },
+  childText: {
+    fontSize: 15,
+    color: '#1A1A1A',
+    marginStart: 4,
+  },
 });
 
-export default RequestModal;
+export default RoomModal;

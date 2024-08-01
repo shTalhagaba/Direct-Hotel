@@ -9,14 +9,24 @@ import Feather from 'react-native-vector-icons/Feather';
 import CustomInputCard from '../../components/CustomInputCard/CustomInputCard';
 import SearchBottomSheet from '../../components/SearchBottomSheet/SearchBottomSheet';
 import ModalView from '../../components/RoomModal/RoomModal';
+import CalendarComponent from '../../components/CalendarComponent/CalendarComponent';
+import moment from 'moment';
 
 const HomeScreen = () => {
   const bottomSheetRef = useRef(null);
   const [selectedTab, setSelectedTab] = useState('Hotels');
   const [location, setLocation] = useState('');
   const [roomModal, setRoomModal] = useState(false);
+  const [isCalendarVisible, setIsCalendarVisible] = useState(false);
+  const [selectedDateRange, setSelectedDateRange] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const navigation = useNavigation();
+
+  const handleDateRangeSelected = (start, end) => {
+    setSelectedDateRange({ start, end });
+    setIsCalendarVisible(false);
+  };
 
   const openBottomSheet = () => {
     bottomSheetRef?.current?.open();
@@ -33,7 +43,10 @@ const HomeScreen = () => {
   return (
     <>
       <View style={styles.container}>
-        <StatusBar barStyle={'light-content'} backgroundColor={colors.primary} />
+        <StatusBar
+          barStyle={'light-content'}
+          backgroundColor={colors.primary}
+        />
         <DetailHeader
           leftIcon={appImages.arrowRight}
           leftIconPress={() => navigation.goBack()}
@@ -44,12 +57,22 @@ const HomeScreen = () => {
           closeBottomSheet={closeBottomSheet}
           setLocation={setLocation}
         />
+        {isCalendarVisible && (
+          <CalendarComponent
+            onDateRangeSelected={handleDateRangeSelected}
+            isModalVisible={isCalendarVisible}
+            setIsModalVisible={setIsModalVisible}
+          />
+        )}
 
         <View style={styles.tabsContainer}>
           {['Visas', 'Hotels', 'Schools'].map((tabName) => (
             <TouchableOpacity
               key={tabName}
-              style={[styles.tab, selectedTab === tabName && styles.selectedTab]}
+              style={[
+                styles.tab,
+                selectedTab === tabName && styles.selectedTab,
+              ]}
               onPress={() => handleTabPress(tabName)}
             >
               {selectedTab === tabName && <View style={styles.overlayLayer} />}
@@ -58,10 +81,10 @@ const HomeScreen = () => {
                   tabName === 'Visas'
                     ? appImages.visa
                     : tabName === 'Hotels'
-                      ? appImages.hotels
-                      : tabName === 'Schools'
-                        ? appImages.course
-                        : appImages.visa
+                    ? appImages.hotels
+                    : tabName === 'Schools'
+                    ? appImages.course
+                    : appImages.visa
                 }
                 style={styles.tabIcon}
               />
@@ -80,10 +103,16 @@ const HomeScreen = () => {
           />
           <CustomInputCard
             icon={'dates'}
-            title=""
+            title={
+              selectedDateRange?.start && selectedDateRange?.end
+                ? moment(selectedDateRange?.start).format('DD MMM YYYY') +
+                  ' - ' +
+                  moment(selectedDateRange?.end).format('DD MMM YYYY')
+                : ''
+            }
             placeholder="Select your dates"
             onDropdownPress={() => {
-              /* Handle dropdown press */
+              setIsCalendarVisible(true);
             }}
           />
           <CustomInputCard
@@ -120,13 +149,13 @@ const HomeScreen = () => {
               ))}
           </View>
         </View>
-        {roomModal &&
+        {roomModal && (
           <ModalView
             modalVisible={roomModal}
             onRequestClose={() => setRoomModal(!roomModal)}
-          />}
+          />
+        )}
       </View>
-
     </>
   );
 };
