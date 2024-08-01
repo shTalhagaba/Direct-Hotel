@@ -20,7 +20,13 @@ const HomeScreen = () => {
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
   const [selectedDateRange, setSelectedDateRange] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedValue, setSelectedValue] = useState('Option 1');
 
+  const options = ['Option 1', 'Option 2', 'Option 3', 'Option 4', 'Option 5'];
+
+  const handleConfirm = (value) => {
+    setSelectedValue(value);
+  };
   const navigation = useNavigation();
 
   const handleDateRangeSelected = (start, end) => {

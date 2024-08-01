@@ -1,25 +1,22 @@
 import React, { useState } from 'react';
 import {
-  Alert,
   Modal,
   StyleSheet,
   Text,
   Image,
   View,
   TouchableOpacity,
-  FlatList,
 } from 'react-native';
 import { colors, appImages } from '../../services';
 import { useNavigation } from '@react-navigation/native';
 import Button from '../Button/Button';
 import CurrencyModal from '../CurrencyModal/CurrencyModal';
+import WheelPickerModal from '../WheelPickerModal/WheelPickerModal';
 import { heightPixel, widthPixel } from '../../services/constants/index';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import Fontisto from 'react-native-vector-icons/Fontisto';
-
-const currencies = ['SAR', 'USD', 'AED', 'EUR', 'GBP'];
 
 const RoomModal = (props) => {
   const navigation = useNavigation();
@@ -30,9 +27,46 @@ const RoomModal = (props) => {
   const [selectedCurrency, setSelectedCurrency] = useState('SAR');
   const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
   const [isCurrencyModalVisible, setIsCurrencyModalVisible] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [selectedValue, setSelectedValue] = useState('1 year old');
+
+  const options = [
+    'Less than 1 year old',
+    '1 year old',
+    '2 years old',
+    '3 years old',
+    '4 years old',
+    '5 years old',
+    '6 years old',
+    '7 years old',
+    '8 years old',
+    '9 years old',
+    '10 years old',
+    '11 years old',
+    '12 years old',
+    '13 years old',
+    '14 years old',
+    '15 years old',
+    '16 years old',
+    '17 years old',
+  ];
+
+  const handleConfirm = (value) => {
+    setSelectedValue(value);
+    setChildrenAges([...childrenAges, { id: Date.now(), age: value }]);
+    setChildrenValue(childrenValue + 1);
+  };
+
+  const openModal = () => {
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
 
   const addChild = () => {
-    setChildrenAges([...childrenAges, { id: Date.now(), age: null }]);
+    openModal()
   };
 
   const removeChild = (id) => {
@@ -188,7 +222,6 @@ const RoomModal = (props) => {
                   </Text>
                   <TouchableOpacity
                     onPress={() => {
-                      setChildrenValue(childrenValue + 1);
                       addChild();
                     }}
                     style={styles.plusContainer}
@@ -202,7 +235,7 @@ const RoomModal = (props) => {
                   <Text style={styles.childText}>Child {index + 1}</Text>
                   <View style={{ flexDirection: 'row' }}>
                     <Text style={[styles.childText, { marginRight: 20 }]}>
-                      Age:
+                      {child?.age}
                     </Text>
                     <TouchableOpacity
                       style={styles.crossContainer}
@@ -270,7 +303,13 @@ const RoomModal = (props) => {
         isCurrencyModalVisible={isCurrencyModalVisible}
         setIsCurrencyModalVisible={setIsCurrencyModalVisible}
         selectedCurrency={selectedCurrency}
-
+      />
+      <WheelPickerModal
+        options={options}
+        selectedValue={selectedValue}
+        onConfirm={handleConfirm}
+        isVisible={isModalVisible}
+        onClose={closeModal}
       />
     </View>
   );
