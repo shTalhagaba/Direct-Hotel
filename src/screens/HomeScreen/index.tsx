@@ -8,7 +8,7 @@ import Button from '../../components/Button/Button';
 import Feather from 'react-native-vector-icons/Feather';
 import CustomInputCard from '../../components/CustomInputCard/CustomInputCard';
 import SearchBottomSheet from '../../components/SearchBottomSheet/SearchBottomSheet';
-import ModalView from '../../components/RoomModal/RoomModal';
+import RoomModal from '../../components/RoomModal/RoomModal';
 import CalendarComponent from '../../components/CalendarComponent/CalendarComponent';
 import moment from 'moment';
 
@@ -20,13 +20,7 @@ const HomeScreen = () => {
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
   const [selectedDateRange, setSelectedDateRange] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedValue, setSelectedValue] = useState('Option 1');
 
-  const options = ['Option 1', 'Option 2', 'Option 3', 'Option 4', 'Option 5'];
-
-  const handleConfirm = (value) => {
-    setSelectedValue(value);
-  };
   const navigation = useNavigation();
 
   const handleDateRangeSelected = (start, end) => {
@@ -156,7 +150,7 @@ const HomeScreen = () => {
           </View>
         </View>
         {roomModal && (
-          <ModalView
+          <RoomModal
             modalVisible={roomModal}
             onRequestClose={() => setRoomModal(!roomModal)}
           />

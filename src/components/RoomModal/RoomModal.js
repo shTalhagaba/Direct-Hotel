@@ -12,16 +12,21 @@ import { useNavigation } from '@react-navigation/native';
 import Button from '../Button/Button';
 import CurrencyModal from '../CurrencyModal/CurrencyModal';
 import WheelPickerModal from '../WheelPickerModal/WheelPickerModal';
-import { heightPixel, widthPixel } from '../../services/constants/index';
+import {
+  childrenAgeList,
+  heightPixel,
+  widthPixel,
+} from '../../services/constants/index';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import Fontisto from 'react-native-vector-icons/Fontisto';
+import styles from './styles';
 
 const RoomModal = (props) => {
   const navigation = useNavigation();
-  const [roomValue, setRoomValue] = useState(0);
-  const [adultsValue, setAdultsValue] = useState(0);
+  const [roomValue, setRoomValue] = useState(1);
+  const [adultsValue, setAdultsValue] = useState(2);
   const [childrenValue, setChildrenValue] = useState(0);
   const [childrenAges, setChildrenAges] = useState([]);
   const [selectedCurrency, setSelectedCurrency] = useState('SAR');
@@ -29,27 +34,6 @@ const RoomModal = (props) => {
   const [isCurrencyModalVisible, setIsCurrencyModalVisible] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedValue, setSelectedValue] = useState('1 year old');
-
-  const options = [
-    'Less than 1 year old',
-    '1 year old',
-    '2 years old',
-    '3 years old',
-    '4 years old',
-    '5 years old',
-    '6 years old',
-    '7 years old',
-    '8 years old',
-    '9 years old',
-    '10 years old',
-    '11 years old',
-    '12 years old',
-    '13 years old',
-    '14 years old',
-    '15 years old',
-    '16 years old',
-    '17 years old',
-  ];
 
   const handleConfirm = (value) => {
     setSelectedValue(value);
@@ -66,7 +50,7 @@ const RoomModal = (props) => {
   };
 
   const addChild = () => {
-    openModal()
+    openModal();
   };
 
   const removeChild = (id) => {
@@ -110,16 +94,16 @@ const RoomModal = (props) => {
                 </View>
                 <View style={styles.quantityContainer}>
                   <TouchableOpacity
-                    disabled={roomValue === 0}
+                    disabled={roomValue === 1}
                     onPress={() => setRoomValue(roomValue - 1)}
                     style={
-                      roomValue === 0
+                      roomValue === 1
                         ? styles.minusContainer
                         : styles.plusContainer
                     }
                   >
                     <Text
-                      style={roomValue === 0 ? styles.minusTxt : styles.plusTxt}
+                      style={roomValue === 1 ? styles.minusTxt : styles.plusTxt}
                     >
                       -
                     </Text>
@@ -128,10 +112,23 @@ const RoomModal = (props) => {
                     {roomValue}
                   </Text>
                   <TouchableOpacity
+                    disabled={roomValue >= adultsValue || roomValue >= 30}
                     onPress={() => setRoomValue(roomValue + 1)}
-                    style={styles.plusContainer}
+                    style={
+                      roomValue >= adultsValue || roomValue >= 30
+                        ? styles.minusContainer
+                        : styles.plusContainer
+                    }
                   >
-                    <Text style={styles.plusTxt}>+</Text>
+                    <Text
+                      style={
+                        roomValue >= adultsValue || roomValue >= 30
+                          ? styles.minusTxt
+                          : styles.plusTxt
+                      }
+                    >
+                      +
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -142,17 +139,26 @@ const RoomModal = (props) => {
                 </View>
                 <View style={styles.quantityContainer}>
                   <TouchableOpacity
-                    disabled={adultsValue === 0}
-                    onPress={() => setAdultsValue(adultsValue - 1)}
+                    disabled={adultsValue === 1}
+                    onPress={() => {
+                      setAdultsValue(adultsValue - 1);
+                      if (roomValue > adultsValue - 1) {
+                        setRoomValue(adultsValue - 1);
+                      }
+                      if (childrenValue > adultsValue - 1) {
+                        setChildrenValue(adultsValue - 1);
+                        setChildrenAges(childrenAges.slice(0, adultsValue - 1));
+                      }
+                    }}
                     style={
-                      adultsValue === 0
+                      adultsValue === 1
                         ? styles.minusContainer
                         : styles.plusContainer
                     }
                   >
                     <Text
                       style={
-                        adultsValue === 0 ? styles.minusTxt : styles.plusTxt
+                        adultsValue === 1 ? styles.minusTxt : styles.plusTxt
                       }
                     >
                       -
@@ -167,10 +173,21 @@ const RoomModal = (props) => {
                     {adultsValue}
                   </Text>
                   <TouchableOpacity
+                    disabled={adultsValue >= 30}
                     onPress={() => setAdultsValue(adultsValue + 1)}
-                    style={styles.plusContainer}
+                    style={
+                      adultsValue >= 30
+                        ? styles.minusContainer
+                        : styles.plusContainer
+                    }
                   >
-                    <Text style={styles.plusTxt}>+</Text>
+                    <Text
+                      style={
+                        adultsValue >= 30 ? styles.minusTxt : styles.plusTxt
+                      }
+                    >
+                      +
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -221,10 +238,13 @@ const RoomModal = (props) => {
                     {childrenValue}
                   </Text>
                   <TouchableOpacity
-                    onPress={() => {
-                      addChild();
-                    }}
-                    style={styles.plusContainer}
+                    disabled={childrenValue >= adultsValue}
+                    onPress={() => addChild()}
+                    style={
+                      childrenValue >= adultsValue
+                        ? styles.minusContainer
+                        : styles.plusContainer
+                    }
                   >
                     <Text style={styles.plusTxt}>+</Text>
                   </TouchableOpacity>
@@ -305,7 +325,7 @@ const RoomModal = (props) => {
         selectedCurrency={selectedCurrency}
       />
       <WheelPickerModal
-        options={options}
+        options={childrenAgeList}
         selectedValue={selectedValue}
         onConfirm={handleConfirm}
         isVisible={isModalVisible}
@@ -314,136 +334,5 @@ const RoomModal = (props) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  centeredView: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  modalView: {
-    width: '100%',
-    backgroundColor: colors.primaryWhite,
-    borderTopEndRadius: 20,
-    borderTopStartRadius: 20,
-    paddingVertical: 7,
-  },
-  modalView2: {
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-  },
-  modalLine: {
-    width: 40,
-    height: 4,
-    backgroundColor: 'lightgrey',
-    alignSelf: 'center',
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  heading: {
-    fontSize: 16,
-    color: colors.primaryBlack,
-    fontWeight: '700',
-    textAlign: 'center',
-  },
-  icon: {
-    height: 20,
-    width: 20,
-  },
-  itemContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 10,
-    borderBlockColor: 'lightgrey',
-    borderBottomWidth: 0.4,
-  },
-  itemTxt: {
-    fontSize: 16,
-    color: '#1A1A1A',
-    marginStart: 4,
-    textAlign: 'center',
-  },
-  quantityContainer: {
-    marginStart: 10,
-    alignSelf: 'center',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  plusContainer: {
-    backgroundColor: colors.primary,
-    width: widthPixel(27),
-    height: heightPixel(27),
-    borderRadius: 6,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  minusContainer: {
-    backgroundColor: colors.primaryWhite,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    width: widthPixel(27),
-    height: heightPixel(27),
-    borderRadius: 6,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  crossContainer: {
-    backgroundColor: colors.primaryWhite,
-    width: widthPixel(27),
-    height: heightPixel(27),
-    borderRadius: 6,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  currencyContainer: {
-    backgroundColor: colors.primaryWhite,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    height: heightPixel(27),
-    borderRadius: 6,
-    alignItems: 'center',
-    flexDirection: 'row',
-    paddingHorizontal: 10,
-  },
-  plusTxt: {
-    fontSize: 18,
-    color: colors.primaryWhite,
-    fontWeight: '400',
-  },
-  minusTxt: {
-    fontSize: 18,
-    color: colors.primary,
-    fontWeight: '400',
-  },
-  desTxt: {
-    fontSize: 17,
-    color: colors.grey,
-    fontWeight: '500',
-    textAlign: 'center',
-  },
-  childContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 10,
-    borderBlockColor: 'lightgrey',
-    borderBottomWidth: 0.5,
-  },
-  currencyText: {
-    fontSize: 13,
-    color: colors.primaryBlack,
-    fontWeight: '700',
-  },
-  btnContainer: {
-    marginBottom: 20,
-    marginHorizontal: 20,
-  },
-  childText: {
-    fontSize: 15,
-    color: '#1A1A1A',
-    marginStart: 4,
-  },
-});
 
 export default RoomModal;

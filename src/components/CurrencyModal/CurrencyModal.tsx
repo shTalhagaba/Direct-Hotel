@@ -10,9 +10,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { colors, appImages } from '../../services';
-const { height, width } = Dimensions.get('screen');
-
-const currencies = ['SAR', 'USD', 'AED', 'EUR', 'GBP'];
+import { currencies, SCREEN_WIDTH } from '../../services/constants/index';
 
 const CurrencyModal = ({
   isCurrencyModalVisible,
@@ -84,7 +82,7 @@ const styles = StyleSheet.create({
   },
   currencyItem: {
     paddingTop: 7,
-    width: width,
+    width: SCREEN_WIDTH,
   },
   currencyContent: {
     flexDirection: 'row',
@@ -92,7 +90,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderBottomColor: 'lightgrey',
     borderBottomWidth: 0.5,
-    width: width,
+    width: SCREEN_WIDTH,
     paddingBottom: 7,
   },
   currencyText: {

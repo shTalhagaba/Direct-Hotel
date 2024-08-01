@@ -45,3 +45,27 @@ const fontPixel = (size) => {
 };
 
 export { widthPixel, heightPixel, fontPixel };
+
+
+export const childrenAgeList = [
+  'Less than 1 year old',
+  '1 year old',
+  '2 years old',
+  '3 years old',
+  '4 years old',
+  '5 years old',
+  '6 years old',
+  '7 years old',
+  '8 years old',
+  '9 years old',
+  '10 years old',
+  '11 years old',
+  '12 years old',
+  '13 years old',
+  '14 years old',
+  '15 years old',
+  '16 years old',
+  '17 years old',
+];
+
+export const currencies = ['SAR', 'USD', 'AED', 'EUR', 'GBP'];
