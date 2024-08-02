@@ -1,5 +1,12 @@
 import React, { useRef, useState } from 'react';
-import { View, StatusBar, TouchableOpacity, Text, Image } from 'react-native';
+import {
+  View,
+  StatusBar,
+  TouchableOpacity,
+  Text,
+  Image,
+  Alert,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import DetailHeader from '../../components/DetailHeader/DetailHeader';
 import styles from './styles';
@@ -13,51 +20,80 @@ import CalendarComponent from '../../components/CalendarComponent/CalendarCompon
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import { handleRecentSearchList } from '../../store/Actions/searchAction';
+import { RootState } from '../../store'; // Adjust this import based on your project setup
 
-const HomeScreen = () => {
-  const bottomSheetRef = useRef(null);
+type TabName = 'Visas' | 'Hotels' | 'Schools';
+
+interface DateRange {
+  start: moment.Moment | null;
+  end: moment.Moment | null;
+}
+
+const HomeScreen: React.FC = () => {
+  const bottomSheetRef = useRef<RBSheet>(null);
   const dispatch = useDispatch();
   const recentSearchList = useSelector(
-    (state) => state.search.recentSearchList,
+    (state: RootState) => state.search.recentSearchList,
   );
-  const [selectedTab, setSelectedTab] = useState('Hotels');
-  const [location, setLocation] = useState('');
-  const [roomModal, setRoomModal] = useState(false);
-  const [isCalendarVisible, setIsCalendarVisible] = useState(false);
-  const [selectedDateRange, setSelectedDateRange] = useState(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [roomValue, setRoomValue] = useState(1);
-  const [adultsValue, setAdultsValue] = useState(2);
-  const [childrenValue, setChildrenValue] = useState(0);
-  const [childrenAges, setChildrenAges] = useState([]);
-  const [selectedCurrency, setSelectedCurrency] = useState('SAR');
+  const [selectedTab, setSelectedTab] = useState<TabName>('Hotels');
+  const [location, setLocation] = useState<string>('');
+  const [roomModal, setRoomModal] = useState<boolean>(false);
+  const [isCalendarVisible, setIsCalendarVisible] = useState<boolean>(false);
+  const [selectedDateRange, setSelectedDateRange] = useState<DateRange>({
+    start: null,
+    end: null,
+  });
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [roomValue, setRoomValue] = useState<number>(1);
+  const [adultsValue, setAdultsValue] = useState<number>(2);
+  const [childrenValue, setChildrenValue] = useState<number>(0);
+  const [childrenAges, setChildrenAges] = useState<number[]>([]);
+  const [selectedCurrency, setSelectedCurrency] = useState<string>('SAR');
 
   const navigation = useNavigation();
 
-  const handleDateRangeSelected = (start, end) => {
+  const handleDateRangeSelected = (
+    start: moment.Moment,
+    end: moment.Moment,
+  ) => {
     setSelectedDateRange({ start, end });
     setIsCalendarVisible(false);
     setRoomModal(true);
   };
 
   const openBottomSheet = () => {
-    bottomSheetRef?.current?.open();
+    bottomSheetRef.current?.open();
   };
 
   const closeBottomSheet = () => {
-    bottomSheetRef?.current?.close();
+    bottomSheetRef.current?.close();
   };
 
-  const handleTabPress = (tabName) => {
+  const handleTabPress = (tabName: TabName) => {
     setSelectedTab(tabName);
   };
-  
-  const handleSetLocation = (item) => {
+
+  const handleSetLocation = (item: { title: string }) => {
     setLocation(item?.title);
-    let list = [...recentSearchList];
-    list.push(item);
-    dispatch(handleRecentSearchList(list));
+    const updatedList = [...recentSearchList, item];
+    dispatch(handleRecentSearchList(updatedList));
     setIsCalendarVisible(true);
+  };
+
+  const handleSearchPress = () => {
+    if (!location) {
+      Alert.alert('Error', 'Please select a location');
+      return;
+    }
+    if (!selectedDateRange.start || !selectedDateRange.end) {
+      Alert.alert('Error', 'Please select your dates');
+      return;
+    }
+    if (!roomValue || !adultsValue) {
+      Alert.alert('Error', 'Please specify room and adults count');
+      return;
+    }
+    Alert.alert('Success', 'All inputs are valid');
   };
 
   return (
@@ -110,7 +146,7 @@ const HomeScreen = () => {
                 styles.tab,
                 selectedTab === tabName && styles.selectedTab,
               ]}
-              onPress={() => handleTabPress(tabName)}
+              onPress={() => handleTabPress(tabName as TabName)}
             >
               {selectedTab === tabName && <View style={styles.overlayLayer} />}
               <Image
@@ -134,9 +170,7 @@ const HomeScreen = () => {
             icon={'location'}
             title={location ? location : ''}
             placeholder="Where are you going?"
-            onDropdownPress={() => {
-              openBottomSheet();
-            }}
+            onDropdownPress={openBottomSheet}
           />
           <CustomInputCard
             icon={'dates'}
@@ -148,9 +182,7 @@ const HomeScreen = () => {
                 : ''
             }
             placeholder="Select your dates"
-            onDropdownPress={() => {
-              setIsCalendarVisible(true);
-            }}
+            onDropdownPress={() => setIsCalendarVisible(true)}
           />
           <CustomInputCard
             icon={'person'}
@@ -168,7 +200,7 @@ const HomeScreen = () => {
         <Button
           btnTitle={'Search'}
           containerStyle={{ marginBottom: 30 }}
-          onPress={() => null}
+          onPress={handleSearchPress}
         />
 
         <View style={styles.bottomBlock}>
@@ -180,11 +212,10 @@ const HomeScreen = () => {
           <Text style={styles.partnershipText}>In partnership with</Text>
           <View style={styles.partnersContainer}>
             {Array(4)
-              .fill()
+              .fill('')
               .map((_, index) => (
-                <View style={styles.imageContainer}>
+                <View style={styles.imageContainer} key={index}>
                   <Image
-                    key={index}
                     source={appImages.course} // Replace with actual partner images
                     style={styles.partnerImage}
                   />

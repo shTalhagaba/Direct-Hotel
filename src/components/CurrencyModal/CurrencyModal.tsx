@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Modal,
   StyleSheet,
@@ -7,17 +7,24 @@ import {
   View,
   FlatList,
   Image,
-  Dimensions,
+  ListRenderItem,
 } from 'react-native';
-import { colors, appImages } from '../../services';
+import { colors, appImages, heightPixel, widthPixel } from '../../services';
 import { currencies, SCREEN_WIDTH } from '../../services/constants/index';
 
-const CurrencyModal = ({
+// Define the prop types
+interface CurrencyModalProps {
+  isCurrencyModalVisible: boolean;
+  setIsCurrencyModalVisible: (visible: boolean) => void;
+  selectCurrency: (currency: string) => void;
+}
+
+const CurrencyModal: React.FC<CurrencyModalProps> = ({
   isCurrencyModalVisible,
   setIsCurrencyModalVisible,
   selectCurrency,
 }) => {
-  const renderCurrencyItem = ({ item }) => (
+  const renderCurrencyItem: ListRenderItem<string> = ({ item }) => (
     <TouchableOpacity
       style={styles.currencyItem}
       onPress={() => selectCurrency(item)}
@@ -60,28 +67,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   currencyModalView: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    paddingVertical: 1,
+    backgroundColor: colors.white,
+    borderRadius: widthPixel(10),
+    paddingVertical: heightPixel(1),
     alignItems: 'center',
     height: '30%',
   },
   modalLine: {
-    width: 40,
-    height: 4,
+    width: widthPixel(40),
+    height: heightPixel(4),
     backgroundColor: 'lightgrey',
     alignSelf: 'center',
-    borderRadius: 10,
-    marginBottom: 10,
+    borderRadius: widthPixel(10),
+    marginBottom: heightPixel(10),
   },
   currencyHeading: {
-    fontSize: 18,
+    fontSize: widthPixel(18),
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: heightPixel(10),
     color: colors.black,
   },
   currencyItem: {
-    paddingTop: 7,
+    paddingTop: heightPixel(7),
     width: SCREEN_WIDTH,
   },
   currencyContent: {
@@ -91,15 +98,15 @@ const styles = StyleSheet.create({
     borderBottomColor: 'lightgrey',
     borderBottomWidth: 0.5,
     width: SCREEN_WIDTH,
-    paddingBottom: 7,
+    paddingBottom: heightPixel(7),
   },
   currencyText: {
-    fontSize: 16,
-    marginRight: 45, // space between text and icon
+    fontSize: widthPixel(16),
+    marginRight: widthPixel(45), // space between text and icon
   },
   icon: {
-    height: 20,
-    width: 20,
+    height: heightPixel(20),
+    width: widthPixel(20),
   },
 });
 

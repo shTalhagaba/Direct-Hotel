@@ -1,23 +1,34 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Modal } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Modal,
+} from 'react-native';
 import { CalendarList } from 'react-native-calendars';
 import moment from 'moment';
-import { colors } from '../../services';
+import { colors, heightPixel, widthPixel } from '../../services';
 import Button from '../Button/Button';
 
-const CalendarComponent = ({
+// Define the prop types
+interface CalendarComponentProps {
+  onDateRangeSelected: (startDate: string, endDate: string) => void;
+  isModalVisible: boolean;
+  setIsModalVisible: (visible: boolean) => void;
+}
+
+const CalendarComponent: React.FC<CalendarComponentProps> = ({
   onDateRangeSelected,
   isModalVisible,
   setIsModalVisible,
 }) => {
   const today = moment().format('YYYY-MM-DD');
   const maxDate = moment().add(1, 'year').format('YYYY-MM-DD');
+  const [selectedDates, setSelectedDates] = useState<{ [key: string]: any }>({});
+  const [startDate, setStartDate] = useState<string | null>(null);
+  const [endDate, setEndDate] = useState<string | null>(null);
 
-  const [selectedDates, setSelectedDates] = useState({});
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-
-  const onDayPress = (day) => {
+  const onDayPress = (day: any) => {
     if (!startDate || (startDate && endDate)) {
       setStartDate(day.dateString);
       setEndDate(null);
@@ -35,8 +46,8 @@ const CalendarComponent = ({
     }
   };
 
-  const getMarkedDates = (start, end) => {
-    let dates = {};
+  const getMarkedDates = (start: string, end: string) => {
+    let dates: { [key: string]: any } = {};
     let currentDate = moment(start);
     const lastDate = moment(end);
 
@@ -80,29 +91,16 @@ const CalendarComponent = ({
             minDate={today}
             maxDate={maxDate}
             theme={calendarTheme}
-            horizontal={false} // Stack months vertically
+            horizontal={false}
             pagingEnabled={true}
-            pastScrollRange={0} // Disable scrolling back to previous months
-            futureScrollRange={12} // Allow scrolling forward 12 months
+            pastScrollRange={0}
+            futureScrollRange={12}
           />
           {startDate && endDate ? (
-            <View
-              style={{
-                position: 'absolute',
-                bottom: 0,
-                backgroundColor: 'white',
-                height: 120,
-                width: '100%',
-              }}
-            >
+            <View style={styles.detailsWrapper}>
               <View style={styles.detailsContainer}>
                 <Text style={styles.dateText}>
-                  {startDate +
-                    ' - ' +
-                    endDate +
-                    ' ( ' +
-                    getNightCount() +
-                    ' nights ) '}
+                  {`${startDate} - ${endDate} ( ${getNightCount()} nights )`}
                 </Text>
                 <Button
                   btnTitle={'Confirm'}
@@ -147,37 +145,38 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Dark background with transparency
+    backgroundColor: colors.black50,
   },
   modalContent: {
     width: '100%',
     height: '90%',
-    backgroundColor: 'white',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingVertical: 20,
-    // justifyContent: 'space-between', // Add this line
+    backgroundColor: colors.white,
+    borderTopLeftRadius: widthPixel(20),
+    borderTopRightRadius: widthPixel(20),
+    paddingVertical: heightPixel(20),
+  },
+  detailsWrapper: {
+    position: 'absolute',
+    bottom: 0,
+    backgroundColor: colors.white,
+    height: heightPixel(120),
+    width: '100%',
   },
   detailsContainer: {
-    marginVertical: 1,
+    marginVertical: heightPixel(1),
     alignItems: 'center',
   },
   dateText: {
-    fontSize: 16,
-    marginTop: 15,
-    fontWeight:'700',
+    fontSize: widthPixel(16),
+    marginTop: heightPixel(15),
+    fontWeight: '700',
     color: colors.black,
   },
-  nightCount: {
-    fontSize: 16,
-    textAlign: 'center',
-    marginVertical: 10,
-  },
   header: {
-    fontSize: 15,
+    fontSize: widthPixel(15),
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 10,
+    marginBottom: heightPixel(10),
     color: colors.black,
   },
 });

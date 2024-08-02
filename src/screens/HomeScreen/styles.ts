@@ -1,13 +1,11 @@
-import { StyleSheet, Dimensions, Platform } from 'react-native';
-import { heightPixel, widthPixel, hp } from '../../services';
+import { StyleSheet, Platform } from 'react-native';
+import { heightPixel, widthPixel, SCREEN_WIDTH } from '../../services';
 import { colors } from '../../services';
-
-const { height, width } = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
-    paddingTop: Platform.OS === 'ios' ? hp(6) : 0,
+    paddingTop: Platform.OS === 'ios' ? heightPixel(6) : 0,
     flex: 1,
   },
   tabsContainer: {
@@ -15,13 +13,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     backgroundColor: colors.white,
-    shadowColor: '#000',
+    shadowColor: colors.pureBlack,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 3,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    borderBottomColor: colors.whiteBorder,
     overflow: 'hidden',
   },
   tab: {
@@ -31,7 +29,7 @@ const styles = StyleSheet.create({
     borderBottomColor: 'transparent',
     flexDirection: 'row',
     justifyContent: 'center',
-    width: width / 3,
+    width: SCREEN_WIDTH / 3,
   },
   selectedTab: {
     borderBottomColor: colors.white,
@@ -52,19 +50,19 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.03)',
+    backgroundColor: colors.black03,
     zIndex: -1,
-    width: width / 3,
+    width: SCREEN_WIDTH / 3,
     height: heightPixel(56),
     borderBottomColor: colors.primary,
     borderBottomWidth: 2,
   },
   bottomBlock: {
-    padding: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.03)',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    marginTop: 30,
+    padding: widthPixel(20),
+    backgroundColor: colors.black03,
+    borderTopLeftRadius: widthPixel(20),
+    borderTopRightRadius: widthPixel(20),
+    marginTop: heightPixel(30),
     position: 'absolute',
     bottom: 0,
     width: '100%',
@@ -72,30 +70,30 @@ const styles = StyleSheet.create({
   },
   boldText: {
     fontWeight: 'bold',
-    fontSize: 18,
-    marginBottom: 10,
+    fontSize: widthPixel(18),
+    marginBottom: heightPixel(10),
     color: colors.black,
   },
   cardContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
-    backgroundColor: colors.primaryWhite
+    marginBottom: heightPixel(10),
+    backgroundColor: colors.primaryWhite,
   },
   cardIcon: {
-    width: 24,
-    height: 24,
-    marginRight: 10,
+    width: widthPixel(24),
+    height: heightPixel(24),
+    marginRight: widthPixel(10),
   },
   cardText: {
-    fontSize: 16,
+    fontSize: widthPixel(16),
     color: colors.black,
-    marginLeft: 10,
+    marginLeft: widthPixel(10),
   },
   partnershipText: {
     fontWeight: 'bold',
-    fontSize: 13,
-    marginTop: 30,
+    fontSize: widthPixel(13),
+    marginTop: heightPixel(30),
     color: colors.pureBlack,
   },
   partnersContainer: {
@@ -108,7 +106,7 @@ const styles = StyleSheet.create({
     marginTop: heightPixel(12),
   },
   imageContainer: {
-    width: width / 4,
+    width: SCREEN_WIDTH / 4,
     alignItems: 'center',
     alignContent: 'center',
   },

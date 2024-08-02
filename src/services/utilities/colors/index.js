@@ -14,9 +14,10 @@ export const colors = {
     black50: 'rgba(0, 0, 0, 0.5)',
     black40: 'rgba(0, 0, 0, 0.4)',
     black20: 'rgba(0, 0, 0, 0.2)',
+    black03: 'rgba(0, 0, 0, 0.03)',
     tabBarInactive: '#737373',
     black: '#222222',
     pureBlack: '#000000',
     textGrey: '#6D6A69',
-
+    whiteBorder: '#E0E0E0',
 };

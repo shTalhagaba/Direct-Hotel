@@ -5,8 +5,9 @@ import {
   TouchableOpacity,
   ViewStyle,
   TextStyle,
+  StyleProp,
 } from 'react-native';
-import { colors } from '../../services';
+import { colors, heightPixel, widthPixel } from '../../services';
 
 // Define the prop types
 interface ButtonProps {
@@ -37,10 +38,10 @@ const Button: React.FC<ButtonProps> = ({
 const styles = StyleSheet.create({
   container: {
     width: '94%',
-    height: 48,
-    marginTop: 20,
+    height: heightPixel(48),
+    marginTop: heightPixel(20),
     backgroundColor: colors.primary,
-    borderRadius: 10,
+    borderRadius: widthPixel(10),
     flexDirection: 'row',
     alignSelf: 'center',
     justifyContent: 'center',
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     fontWeight: '600',
     color: colors.white,
-    fontSize: 19,
+    fontSize: widthPixel(19),
   },
 });
 

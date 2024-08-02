@@ -1,20 +1,52 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons'; // Replace with the icon library you're using
-import { colors, heightPixel, widthPixel } from '../../services';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  StyleProp,
+  ViewStyle,
+} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { colors, heightPixel, widthPixel } from '../../services';
 
-const CustomInputCard = ({ icon, title, placeholder, onDropdownPress }) => {
+interface CustomInputCardProps {
+  icon: 'location' | 'dates' | 'person';
+  title?: string;
+  placeholder: string;
+  onDropdownPress: () => void;
+  style?: StyleProp<ViewStyle>;
+}
+
+const CustomInputCard: React.FC<CustomInputCardProps> = ({
+  icon,
+  title,
+  placeholder,
+  onDropdownPress,
+  style,
+}) => {
   return (
-    <TouchableOpacity style={styles.cardContainer} onPress={onDropdownPress}>
+    <TouchableOpacity
+      style={[styles.cardContainer, style]}
+      onPress={onDropdownPress}
+    >
       <View style={styles.iconContainer}>
         {icon === 'location' ? (
-          <Entypo name={icon} size={18} color={colors.primary} />
+          <Entypo name={icon} size={widthPixel(18)} color={colors.primary} />
         ) : icon === 'dates' ? (
-          <Entypo name={'calendar'} size={17} color={colors.primary} />
+          <Entypo
+            name={'calendar'}
+            size={widthPixel(17)}
+            color={colors.primary}
+          />
         ) : (
-          <Ionicons name={'person'} size={17} color={colors.primary} />
+          <Ionicons
+            name={'person'}
+            size={widthPixel(17)}
+            color={colors.primary}
+          />
         )}
       </View>
       <View style={styles.contentContainer}>
@@ -26,7 +58,11 @@ const CustomInputCard = ({ icon, title, placeholder, onDropdownPress }) => {
         style={styles.dropdownContainer}
         onPress={onDropdownPress}
       >
-        <Icon name="arrow-drop-down" size={24} color={colors.grey} />
+        <Icon
+          name="arrow-drop-down"
+          size={widthPixel(24)}
+          color={colors.grey}
+        />
       </TouchableOpacity>
     </TouchableOpacity>
   );
@@ -34,19 +70,19 @@ const CustomInputCard = ({ icon, title, placeholder, onDropdownPress }) => {
 
 const styles = StyleSheet.create({
   cardContainer: {
-    borderRadius: 10,
+    borderRadius: widthPixel(10),
     backgroundColor: colors.white,
     shadowColor: colors.pureBlack,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
-    shadowRadius: 4,
+    shadowRadius: widthPixel(4),
     elevation: 3,
-    padding: 8,
-    marginVertical: 5,
-    marginHorizontal: 14,
+    padding: widthPixel(8),
+    marginVertical: heightPixel(5),
+    marginHorizontal: widthPixel(14),
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: colors.whiteBorder,
     flexDirection: 'row',
     justifyContent: 'space-between',
     height: heightPixel(46),
@@ -55,25 +91,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   topIcon: {
-    width: 24,
-    height: 24,
+    width: widthPixel(24),
+    height: heightPixel(24),
   },
   contentContainer: {
     flex: 1,
     justifyContent: 'center',
-    marginLeft: 10,
+    marginLeft: widthPixel(10),
   },
   title: {
-    fontSize: 14,
+    fontSize: widthPixel(14),
     color: colors.pureBlack,
   },
   placeholder: {
-    fontSize: 13,
+    fontSize: widthPixel(13),
     color: colors.grey,
   },
   dropdownContainer: {
-    paddingLeft: 4,
-    paddingTop: 1,
+    paddingLeft: widthPixel(4),
+    paddingTop: heightPixel(1),
   },
 });
 
