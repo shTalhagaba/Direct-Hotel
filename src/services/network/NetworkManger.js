@@ -18,7 +18,12 @@ export const Status = {
   "DELETE": 204,
 }
 export const callApi = async (url, method, data) => {
-    const headers = { 'Accept': 'application/json' }
+    // const headers = { 'Accept': 'application/json' }
+    const headers = {
+      'Content-Type': 'application/json',
+      accept: 'application/json, text/plain, */*',
+      'accept-language': 'en-US,en;q=0.9',
+    };
     try {
       const response = await axios({ method, url: BASE_URL + url, data, headers })
       return response?.data

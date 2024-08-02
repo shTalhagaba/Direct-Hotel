@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   title: {
-    fontSize: 13,
+    fontSize: 14,
     color: colors.pureBlack,
   },
   placeholder: {

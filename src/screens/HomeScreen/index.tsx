@@ -11,21 +11,33 @@ import SearchBottomSheet from '../../components/SearchBottomSheet/SearchBottomSh
 import RoomModal from '../../components/RoomModal/RoomModal';
 import CalendarComponent from '../../components/CalendarComponent/CalendarComponent';
 import moment from 'moment';
+import { useDispatch, useSelector } from 'react-redux';
+import { handleRecentSearchList } from '../../store/Actions/searchAction';
 
 const HomeScreen = () => {
   const bottomSheetRef = useRef(null);
+  const dispatch = useDispatch();
+  const recentSearchList = useSelector(
+    (state) => state.search.recentSearchList,
+  );
   const [selectedTab, setSelectedTab] = useState('Hotels');
   const [location, setLocation] = useState('');
   const [roomModal, setRoomModal] = useState(false);
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
   const [selectedDateRange, setSelectedDateRange] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [roomValue, setRoomValue] = useState(1);
+  const [adultsValue, setAdultsValue] = useState(2);
+  const [childrenValue, setChildrenValue] = useState(0);
+  const [childrenAges, setChildrenAges] = useState([]);
+  const [selectedCurrency, setSelectedCurrency] = useState('SAR');
 
   const navigation = useNavigation();
 
   const handleDateRangeSelected = (start, end) => {
     setSelectedDateRange({ start, end });
     setIsCalendarVisible(false);
+    setRoomModal(true);
   };
 
   const openBottomSheet = () => {
@@ -38,6 +50,14 @@ const HomeScreen = () => {
 
   const handleTabPress = (tabName) => {
     setSelectedTab(tabName);
+  };
+  
+  const handleSetLocation = (item) => {
+    setLocation(item?.title);
+    let list = [...recentSearchList];
+    list.push(item);
+    dispatch(handleRecentSearchList(list));
+    setIsCalendarVisible(true);
   };
 
   return (
@@ -55,13 +75,30 @@ const HomeScreen = () => {
         <SearchBottomSheet
           bottomSheetRef={bottomSheetRef}
           closeBottomSheet={closeBottomSheet}
-          setLocation={setLocation}
+          setLocation={handleSetLocation}
+          recentSearchList={recentSearchList}
         />
         {isCalendarVisible && (
           <CalendarComponent
             onDateRangeSelected={handleDateRangeSelected}
             isModalVisible={isCalendarVisible}
             setIsModalVisible={setIsModalVisible}
+          />
+        )}
+        {roomModal && (
+          <RoomModal
+            modalVisible={roomModal}
+            onRequestClose={() => setRoomModal(!roomModal)}
+            roomValue={roomValue}
+            setRoomValue={setRoomValue}
+            adultsValue={adultsValue}
+            setAdultsValue={setAdultsValue}
+            childrenValue={childrenValue}
+            setChildrenValue={setChildrenValue}
+            childrenAges={childrenAges}
+            setChildrenAges={setChildrenAges}
+            selectedCurrency={selectedCurrency}
+            setSelectedCurrency={setSelectedCurrency}
           />
         )}
 
@@ -117,7 +154,13 @@ const HomeScreen = () => {
           />
           <CustomInputCard
             icon={'person'}
-            title=""
+            title={
+              adultsValue +
+              ' Adults - ' +
+              (childrenValue > 0 ? childrenValue : 'Without') +
+              ' Children - ' +
+              (roomValue <= 1 ? roomValue + ' Room' : roomValue + ' Rooms')
+            }
             placeholder="Enter something..."
             onDropdownPress={() => setRoomModal(true)}
           />
@@ -149,12 +192,6 @@ const HomeScreen = () => {
               ))}
           </View>
         </View>
-        {roomModal && (
-          <RoomModal
-            modalVisible={roomModal}
-            onRequestClose={() => setRoomModal(!roomModal)}
-          />
-        )}
       </View>
     </>
   );

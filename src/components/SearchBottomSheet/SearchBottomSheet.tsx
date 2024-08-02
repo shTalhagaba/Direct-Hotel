@@ -6,22 +6,30 @@ import {
   TouchableOpacity,
   StyleSheet,
   FlatList,
-  StatusBar,
   Dimensions,
   ActivityIndicator,
 } from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // For the search icon and pin icon
 import { colors } from '../../services';
-import { searchApi } from '../../services/network/appApi';
+import {
+  searchApi,
+  topDestinationSearchApi,
+} from '../../services/network/appApi';
 
-const { height, width } = Dimensions.get('screen');
+const { height } = Dimensions.get('screen');
 
-const RecommendedItem = ({ text, location, setLocation, closeBottomSheet }) => (
+const RecommendedItem = ({
+  item,
+  text,
+  location,
+  setLocation,
+  closeBottomSheet,
+}) => (
   <TouchableOpacity
     style={styles.itemContainer}
     onPress={() => {
-      setLocation(text);
+      setLocation(item);
       closeBottomSheet();
     }}
   >
@@ -37,18 +45,30 @@ const SearchBottomSheet = ({
   bottomSheetRef,
   closeBottomSheet,
   setLocation,
+  recentSearchList,
 }) => {
   const [searchText, setSearchText] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showRecommended, setShowRecommended] = useState(true);
+  const [recommendedSearches, setRecommendedSearches] = useState([]);
 
-  // Data for recommended searches
-  const recommendedSearches = [
-    { title: 'Cairo', label: 'Egypt' },
-    { title: 'Alexandria', label: 'Egypt' },
-    // Add more items as needed
-  ];
+  const fetchTopDestinations = async () => {
+    const body = {
+      language: 'en',
+    };
+    try {
+      const response = await topDestinationSearchApi(body);
+      setRecommendedSearches(response?.data?.top_destinations);
+      setShowRecommended(true);
+    } catch (error) {
+      console.error('Error fetching top destinations:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTopDestinations();
+  }, []);
 
   useEffect(() => {
     if (searchText?.length > 0) {
@@ -77,6 +97,7 @@ const SearchBottomSheet = ({
       location={item?.label}
       setLocation={setLocation}
       closeBottomSheet={closeBottomSheet}
+      item={item}
     />
   );
 
@@ -115,14 +136,30 @@ const SearchBottomSheet = ({
           </TouchableOpacity>
         </View>
         <View style={{ paddingHorizontal: 20, flex: 1 }}>
+          {searchResults?.length > 0 ? null : (
+            <View style={{flexGrow:0,}}>
+              <Text style={styles.recommendedText}>{'Recent Searches'}</Text>
+              <FlatList
+                data={recentSearchList}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={renderItem}
+              />
+            </View>
+          )}
           <Text style={styles.recommendedText}>
-            {showRecommended ? 'Recommended Searches' : 'Search Results'}
+            {showRecommended && searchText?.length <= 1
+              ? 'Recommended Searches'
+              : 'Search Results'}
           </Text>
           {isLoading ? (
             <ActivityIndicator size="large" color={colors.primary} />
           ) : (
             <FlatList
-              data={showRecommended ? recommendedSearches : searchResults}
+              data={
+                showRecommended && searchText?.length <= 1
+                  ? recommendedSearches
+                  : searchResults
+              }
               keyExtractor={(item, index) => index.toString()}
               renderItem={renderItem}
             />

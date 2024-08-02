@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import {
   Modal,
-  StyleSheet,
   Text,
   Image,
   View,
   TouchableOpacity,
 } from 'react-native';
 import { colors, appImages } from '../../services';
-import { useNavigation } from '@react-navigation/native';
 import Button from '../Button/Button';
 import CurrencyModal from '../CurrencyModal/CurrencyModal';
 import WheelPickerModal from '../WheelPickerModal/WheelPickerModal';
@@ -24,12 +22,6 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import styles from './styles';
 
 const RoomModal = (props) => {
-  const navigation = useNavigation();
-  const [roomValue, setRoomValue] = useState(1);
-  const [adultsValue, setAdultsValue] = useState(2);
-  const [childrenValue, setChildrenValue] = useState(0);
-  const [childrenAges, setChildrenAges] = useState([]);
-  const [selectedCurrency, setSelectedCurrency] = useState('SAR');
   const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
   const [isCurrencyModalVisible, setIsCurrencyModalVisible] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
@@ -37,8 +29,8 @@ const RoomModal = (props) => {
 
   const handleConfirm = (value) => {
     setSelectedValue(value);
-    setChildrenAges([...childrenAges, { id: Date.now(), age: value }]);
-    setChildrenValue(childrenValue + 1);
+    props?.setChildrenAges([...props?.childrenAges, { id: Date.now(), age: value }]);
+    props?.setChildrenValue(props?.childrenValue + 1);
   };
 
   const openModal = () => {
@@ -54,15 +46,7 @@ const RoomModal = (props) => {
   };
 
   const removeChild = (id) => {
-    setChildrenAges(childrenAges.filter((child) => child.id !== id));
-  };
-
-  const setChildAge = (id, age) => {
-    setChildrenAges(
-      childrenAges.map((child) =>
-        child.id === id ? { ...child, age } : child,
-      ),
-    );
+    props?.setChildrenAges(props?.childrenAges.filter((child) => child.id !== id));
   };
 
   const toggleCurrencyDropdown = () => {
@@ -70,9 +54,13 @@ const RoomModal = (props) => {
   };
 
   const selectCurrency = (currency) => {
-    setSelectedCurrency(currency);
+    props?.setSelectedCurrency(currency);
     setIsCurrencyModalVisible(false);
   };
+
+  const handleContinue = () => {
+    props.onRequestClose()
+  }
 
   return (
     <View style={styles.centeredView}>
@@ -94,35 +82,35 @@ const RoomModal = (props) => {
                 </View>
                 <View style={styles.quantityContainer}>
                   <TouchableOpacity
-                    disabled={roomValue === 1}
-                    onPress={() => setRoomValue(roomValue - 1)}
+                    disabled={props?.roomValue === 1}
+                    onPress={() => props?.setRoomValue(props?.roomValue - 1)}
                     style={
-                      roomValue === 1
+                      props?.roomValue === 1
                         ? styles.minusContainer
                         : styles.plusContainer
                     }
                   >
                     <Text
-                      style={roomValue === 1 ? styles.minusTxt : styles.plusTxt}
+                      style={props?.roomValue === 1 ? styles.minusTxt : styles.plusTxt}
                     >
                       -
                     </Text>
                   </TouchableOpacity>
                   <Text style={[styles.desTxt, { marginHorizontal: 14 }]}>
-                    {roomValue}
+                    {props?.roomValue}
                   </Text>
                   <TouchableOpacity
-                    disabled={roomValue >= adultsValue || roomValue >= 30}
-                    onPress={() => setRoomValue(roomValue + 1)}
+                    disabled={props?.roomValue >= props?.adultsValue || props?.roomValue >= 30}
+                    onPress={() => props?.setRoomValue(props?.roomValue + 1)}
                     style={
-                      roomValue >= adultsValue || roomValue >= 30
+                      props?.roomValue >= props?.adultsValue || props?.roomValue >= 30
                         ? styles.minusContainer
                         : styles.plusContainer
                     }
                   >
                     <Text
                       style={
-                        roomValue >= adultsValue || roomValue >= 30
+                        props?.roomValue >= props?.adultsValue || props?.roomValue >= 30
                           ? styles.minusTxt
                           : styles.plusTxt
                       }
@@ -139,26 +127,26 @@ const RoomModal = (props) => {
                 </View>
                 <View style={styles.quantityContainer}>
                   <TouchableOpacity
-                    disabled={adultsValue === 1}
+                    disabled={props?.adultsValue === 1}
                     onPress={() => {
-                      setAdultsValue(adultsValue - 1);
-                      if (roomValue > adultsValue - 1) {
-                        setRoomValue(adultsValue - 1);
+                      props?.setAdultsValue(props?.adultsValue - 1);
+                      if (props?.roomValue > props?.adultsValue - 1) {
+                        props?.setRoomValue(props?.adultsValue - 1);
                       }
-                      if (childrenValue > adultsValue - 1) {
-                        setChildrenValue(adultsValue - 1);
-                        setChildrenAges(childrenAges.slice(0, adultsValue - 1));
+                      if (props?.childrenValue > props?.adultsValue - 1) {
+                        props?.setChildrenValue(props?.adultsValue - 1);
+                        props?.setChildrenAges(props?.childrenAges.slice(0, props?.adultsValue - 1));
                       }
                     }}
                     style={
-                      adultsValue === 1
+                      props?.adultsValue === 1
                         ? styles.minusContainer
                         : styles.plusContainer
                     }
                   >
                     <Text
                       style={
-                        adultsValue === 1 ? styles.minusTxt : styles.plusTxt
+                        props?.adultsValue === 1 ? styles.minusTxt : styles.plusTxt
                       }
                     >
                       -
@@ -170,20 +158,20 @@ const RoomModal = (props) => {
                       { marginHorizontal: 14, marginTop: 5 },
                     ]}
                   >
-                    {adultsValue}
+                    {props?.adultsValue}
                   </Text>
                   <TouchableOpacity
-                    disabled={adultsValue >= 30}
-                    onPress={() => setAdultsValue(adultsValue + 1)}
+                    disabled={props?.adultsValue >= 30}
+                    onPress={() => props?.setAdultsValue(props?.adultsValue + 1)}
                     style={
-                      adultsValue >= 30
+                      props?.adultsValue >= 30
                         ? styles.minusContainer
                         : styles.plusContainer
                     }
                   >
                     <Text
                       style={
-                        adultsValue >= 30 ? styles.minusTxt : styles.plusTxt
+                        props?.adultsValue >= 30 ? styles.minusTxt : styles.plusTxt
                       }
                     >
                       +
@@ -210,20 +198,20 @@ const RoomModal = (props) => {
                 </View>
                 <View style={styles.quantityContainer}>
                   <TouchableOpacity
-                    disabled={childrenValue === 0}
+                    disabled={props?.childrenValue === 0}
                     onPress={() => {
-                      setChildrenValue(childrenValue - 1);
-                      setChildrenAges(childrenAges.slice(0, -1));
+                      props?.setChildrenValue(props?.childrenValue - 1);
+                      props?.setChildrenAges(props?.childrenAges.slice(0, -1));
                     }}
                     style={
-                      childrenValue === 0
+                      props?.childrenValue === 0
                         ? styles.minusContainer
                         : styles.plusContainer
                     }
                   >
                     <Text
                       style={
-                        childrenValue === 0 ? styles.minusTxt : styles.plusTxt
+                        props?.childrenValue === 0 ? styles.minusTxt : styles.plusTxt
                       }
                     >
                       -
@@ -235,13 +223,13 @@ const RoomModal = (props) => {
                       { marginHorizontal: 14, marginTop: 5 },
                     ]}
                   >
-                    {childrenValue}
+                    {props?.childrenValue}
                   </Text>
                   <TouchableOpacity
-                    disabled={childrenValue >= adultsValue}
+                    disabled={props?.childrenValue >= props?.adultsValue}
                     onPress={() => addChild()}
                     style={
-                      childrenValue >= adultsValue
+                      props?.childrenValue >= props?.adultsValue
                         ? styles.minusContainer
                         : styles.plusContainer
                     }
@@ -250,7 +238,7 @@ const RoomModal = (props) => {
                   </TouchableOpacity>
                 </View>
               </View>
-              {childrenAges.map((child, index) => (
+              {props?.childrenAges.map((child, index) => (
                 <View key={child.id} style={styles.childContainer}>
                   <Text style={styles.childText}>Child {index + 1}</Text>
                   <View style={{ flexDirection: 'row' }}>
@@ -293,7 +281,7 @@ const RoomModal = (props) => {
                   <Text
                     style={[styles.currencyText, { paddingHorizontal: 10 }]}
                   >
-                    {selectedCurrency}
+                    {props?.selectedCurrency}
                   </Text>
                   <Icon
                     name="arrow-drop-down"
@@ -303,14 +291,14 @@ const RoomModal = (props) => {
                 </TouchableOpacity>
               </View>
               <Text style={[styles.heading, { paddingVertical: 20 }]}>
-                {roomValue} Rooms - {adultsValue} Adults - {childrenValue}{' '}
+                {props?.roomValue} Rooms - {props?.adultsValue} Adults - {props?.childrenValue}{' '}
                 Children
               </Text>
             </View>
             <Button
               btnTitle={'CONTINUE'}
               containerStyle={{ marginBottom: 20, marginTop: 0 }}
-              onPress={props.onRequestClose}
+              onPress={handleContinue}
             />
           </View>
         </View>
@@ -322,7 +310,7 @@ const RoomModal = (props) => {
         selectCurrency={selectCurrency}
         isCurrencyModalVisible={isCurrencyModalVisible}
         setIsCurrencyModalVisible={setIsCurrencyModalVisible}
-        selectedCurrency={selectedCurrency}
+        selectedCurrency={props?.selectedCurrency}
       />
       <WheelPickerModal
         options={childrenAgeList}

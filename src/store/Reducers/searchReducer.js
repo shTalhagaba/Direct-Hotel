@@ -1,4 +1,4 @@
-import * as actions from '../Actions/authAction';
+import * as actions from '../Actions/searchAction';
 
 export const intialState = {
   recentSearchList: [],
